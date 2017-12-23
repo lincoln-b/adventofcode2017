@@ -1,8 +1,4 @@
 from copy import copy
-
-# PART 1
-
-#lengths = [183,0,31,146,254,240,223,150,2,206,161,1,255,232,199,88]
 position = 0
 skip = 0
 size = 256
@@ -21,10 +17,6 @@ def hash(lengths):
         while position >= size:
             position -= size
         skip += 1
-
-# PART 2
-
-puz = "183,0,31,146,254,240,223,150,2,206,161,1,255,232,199,88"
 
 def knot(puz):
     global numbers,position,skip,size
@@ -45,3 +37,33 @@ def knot(puz):
         str += format(i,'02x')
     return str
 
+puz = "ugkiagan-"
+
+#puz = "flqrgnkx-"
+grid = []
+for i in range(128):
+    hashcode = knot(puz + str(i))
+    grid.append([])
+    for c in hashcode:
+        b = bin(int(c,16))[2:].zfill(4)
+        grid[i].append(int(b[0]))
+        grid[i].append(int(b[1]))
+        grid[i].append(int(b[2]))
+        grid[i].append(int(b[3]))
+
+def group(i,j):
+    global grid
+    if i < 0 or j < 0 or i > 127 or j > 127 or grid[i][j] == 2 or grid[i][j] == 0:
+        return False
+    grid[i][j] = 2
+    group(i-1,j)
+    group(i+1,j)
+    group(i,j-1)
+    group(i,j+1)
+    return True
+
+numgroups = 0
+for i in range(128):
+    for j in range(128):
+        if group(i,j):
+            numgroups += 1
